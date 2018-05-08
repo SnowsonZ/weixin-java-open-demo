@@ -3,6 +3,7 @@ package com.github.binarywang.demo.wechat.config;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
  * @author <a href="https://github.com/007gzs">007</a>
  */

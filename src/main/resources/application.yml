@@ -5,10 +5,10 @@ logging:
 
 wechat:
   open:
-    componentAppId: ""
-    componentSecret: ""
-    componentToken: ""
-    componentAesKey: ""
+    componentAppId: "***********"
+    componentSecret: "*************"
+    componentToken: "*****"
+    componentAesKey: "*********"
   redis:
     host: "127.0.0.1"
 server:
