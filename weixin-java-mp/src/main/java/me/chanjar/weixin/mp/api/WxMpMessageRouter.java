@@ -165,14 +165,14 @@ public class WxMpMessageRouter {
     for (final WxMpMessageRouterRule rule : matchRules) {
       // 返回最后一个非异步的rule的执行结果
       if (rule.isAsync()) {
-        futures.add(
-          this.executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-              rule.service(wxMessage, context, mpService, WxMpMessageRouter.this.sessionManager, WxMpMessageRouter.this.exceptionHandler);
-            }
-          })
-        );
+//        futures.add(
+//          this.executorService.submit(new Runnable() {
+//            @Override
+//            public void run() {
+              res = rule.service(wxMessage, context, mpService, WxMpMessageRouter.this.sessionManager, WxMpMessageRouter.this.exceptionHandler);
+//            }
+//          })
+//        );
       } else {
         res = rule.service(wxMessage, context, mpService, this.sessionManager, this.exceptionHandler);
         // 在同步操作结束，session访问结束

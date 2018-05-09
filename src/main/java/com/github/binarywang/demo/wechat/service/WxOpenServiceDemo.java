@@ -7,6 +7,7 @@ import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import me.chanjar.weixin.open.api.impl.WxOpenInRedisConfigStorage;
 import me.chanjar.weixin.open.api.impl.WxOpenServiceImpl;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
@@ -16,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
+
+import me.chanjar.weixin.open.bean.message.WxOpenXmlMessage;
 import redis.clients.jedis.JedisPool;
 
 import javax.annotation.PostConstruct;
@@ -46,9 +49,16 @@ public class WxOpenServiceDemo extends WxOpenServiceImpl {
         wxOpenMessageRouter = new WxOpenMessageRouter(this);
         wxOpenMessageRouter.rule().handler(new WxMpMessageHandler() {
             @Override
-            public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
+            public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map,
+                                            WxMpService wxMpService,
+                                            WxSessionManager wxSessionManager)
+                    throws WxErrorException {
                 logger.info("\n接收到 {} 公众号请求消息，内容：{}", wxMpService.getWxMpConfigStorage().getAppId(), wxMpXmlMessage);
-                return null;
+                return WxMpXmlOutMessage.TEXT()
+                        .content("感谢关注")
+                        .toUser(wxMpXmlMessage.getFromUser())
+                        .fromUser(wxMpXmlMessage.getToUser())
+                        .build();
             }
         }).next();
     }
