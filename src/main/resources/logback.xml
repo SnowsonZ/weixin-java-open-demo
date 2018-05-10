@@ -15,7 +15,8 @@
             <!--<pattern>%d %p (%file:%line\)- %m%n</pattern>-->
             <!--格式化输出：%d:表示日期    %thread:表示线程名     %-5level:级别从左显示5个字符宽度  %msg:日志消息    %n:是换行符-->
             <pattern>控制台-%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
-            <!--<charset>UTF-8</charset>-->
+            <!--windows环境下默认使用GBK编码-->
+            <charset>GBK</charset>
         </encoder>
     </appender>
 
