@@ -1,6 +1,6 @@
 package com.github.binarywang.demo.wechat.controller;
 
-import com.github.binarywang.demo.wechat.service.WxOpenServiceDemo;
+import com.github.binarywang.demo.wechat.service.WxOpenServiceInit;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class WechatNotifyController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    protected WxOpenServiceDemo wxOpenService;
+    protected WxOpenServiceInit wxOpenService;
 
     @RequestMapping("receive_ticket")
     public Object receiveTicket(@RequestBody(required = false) String requestBody, @RequestParam("timestamp") String timestamp,
@@ -96,6 +96,7 @@ public class WechatNotifyController {
                 logger.error("callback", e);
             }
         }else{
+            //消息路由
             WxMpXmlOutMessage outMessage = wxOpenService.getWxOpenMessageRouter().route(inMessage, appId);
             if(outMessage != null){
                 out = WxOpenXmlMessage.wxMpOutXmlMessageToEncryptedXml(outMessage, wxOpenService.getWxOpenConfigStorage());

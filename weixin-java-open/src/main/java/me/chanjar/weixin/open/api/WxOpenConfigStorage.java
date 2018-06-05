@@ -34,7 +34,7 @@ public interface WxOpenConfigStorage {
 
   boolean isComponentAccessTokenExpired();
 
-  void updateComponentAccessTokent(WxOpenComponentAccessToken componentAccessToken);
+  void updateComponentAccessToken(WxOpenComponentAccessToken componentAccessToken);
 
   WxMpConfigStorage getWxMpConfigStorage(String appId);
 
@@ -46,7 +46,7 @@ public interface WxOpenConfigStorage {
    * @param componentAccessToken 新的accessToken值
    * @param expiresInSeconds     过期时间，以秒为单位
    */
-  void updateComponentAccessTokent(String componentAccessToken, int expiresInSeconds);
+  void updateComponentAccessToken(String componentAccessToken, int expiresInSeconds);
 
   /**
    * 是否自动刷新token

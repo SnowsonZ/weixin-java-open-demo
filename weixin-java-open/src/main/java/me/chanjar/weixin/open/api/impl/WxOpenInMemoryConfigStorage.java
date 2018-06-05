@@ -96,8 +96,8 @@ public class WxOpenInMemoryConfigStorage implements WxOpenConfigStorage {
   }
 
   @Override
-  public void updateComponentAccessTokent(WxOpenComponentAccessToken componentAccessToken) {
-    updateComponentAccessTokent(componentAccessToken.getComponentAccessToken(), componentAccessToken.getExpiresIn());
+  public void updateComponentAccessToken(WxOpenComponentAccessToken componentAccessToken) {
+    updateComponentAccessToken(componentAccessToken.getComponentAccessToken(), componentAccessToken.getExpiresIn());
   }
 
   @Override
@@ -111,7 +111,7 @@ public class WxOpenInMemoryConfigStorage implements WxOpenConfigStorage {
   }
 
   @Override
-  public void updateComponentAccessTokent(String componentAccessToken, int expiresInSeconds) {
+  public void updateComponentAccessToken(String componentAccessToken, int expiresInSeconds) {
     this.componentAccessToken = componentAccessToken;
     this.componentExpiresTime = System.currentTimeMillis() + (expiresInSeconds - 200) * 1000L;
   }
