@@ -1,5 +1,6 @@
 package com.github.binarywang.demo.wechat.controller;
 
+import com.github.binarywang.demo.wechat.bean.Status;
 import com.github.binarywang.demo.wechat.service.WxOpenServiceInit;
 
 import me.chanjar.weixin.common.exception.WxErrorException;
@@ -51,11 +52,14 @@ public class WechatApiController {
 
     @GetMapping("auth/jump")
     @ResponseBody
-    public WxOpenQueryAuthResult jump(@RequestParam("auth_code") String authorizationCode) {
+    public Status jump(@RequestParam("auth_code") String authorizationCode) {
         try {
             WxOpenQueryAuthResult queryAuthResult = wxOpenService.getWxOpenComponentService().getQueryAuth(authorizationCode);
             logger.info("getQueryAuth", queryAuthResult);
-            return queryAuthResult;
+            Status status = new Status();
+            status.setCode(0);
+            status.setMsg("授权成功");
+            return status;
         } catch (WxErrorException e) {
             logger.error("gotoPreAuthUrl", e);
             throw new RuntimeException(e);
