@@ -1,10 +1,12 @@
 package me.chanjar.weixin.mp.api.impl;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 
 import me.chanjar.weixin.common.bean.WxCardApiSignature;
 import me.chanjar.weixin.common.bean.result.WxError;
@@ -14,12 +16,15 @@ import me.chanjar.weixin.common.util.crypto.SHA1;
 import me.chanjar.weixin.common.util.http.SimpleGetRequestExecutor;
 import me.chanjar.weixin.mp.api.WxMpCardService;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.card.CardKeyInfo;
 import me.chanjar.weixin.mp.bean.result.WxMpCardResult;
 import me.chanjar.weixin.mp.util.json.WxMpGsonBuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 
@@ -76,9 +81,8 @@ public class WxMpCardServiceImpl implements WxMpCardService {
             }
 
             if (this.getWxMpService().getWxMpConfigStorage().isCardApiTicketExpired()) {
-                String accessToken = "access_token: " + this.getWxMpService().getAccessToken();
                 String responseContent = this.wxMpService.execute(SimpleGetRequestExecutor
-                        .create(this.getWxMpService().getRequestHttp()), CARD_GET_TICKET, accessToken);
+                        .create(this.getWxMpService().getRequestHttp()), CARD_GET_TICKET, "");
                 JsonElement tmpJsonElement = new JsonParser().parse(responseContent);
                 JsonObject tmpJsonObject = tmpJsonElement.getAsJsonObject();
                 String cardApiTicket = tmpJsonObject.get("ticket").getAsString();
@@ -150,7 +154,8 @@ public class WxMpCardServiceImpl implements WxMpCardService {
      * @return WxMpCardResult对象
      */
     @Override
-    public WxMpCardResult queryCardCode(String cardId, String code, boolean checkConsume) throws WxErrorException {
+    public WxMpCardResult queryCardCode(String cardId, String code, boolean checkConsume)
+            throws WxErrorException {
         JsonObject param = new JsonObject();
         param.addProperty("card_id", cardId);
         param.addProperty("code", code);
@@ -195,7 +200,7 @@ public class WxMpCardServiceImpl implements WxMpCardService {
     }
 
     /**
-     * 卡券Mark接口。
+     * 卡券(朋友的券)Mark接口。
      * 开发者在帮助消费者核销卡券之前，必须帮助先将此code（卡券串码）与一个openid绑定（即mark住），
      * 才能进一步调用核销接口，否则报错。
      *
@@ -240,4 +245,68 @@ public class WxMpCardServiceImpl implements WxMpCardService {
 
         return responseContent;
     }
+
+    // start 卡券管理接口
+
+    /**
+     * 查询用户在某商家下的卡券code及cardId信息
+     *
+     * @param openId 用户openId
+     * @param cardId 卡券ID，可为空，为空则表示获取所有卡券
+     * @return
+     * @throws WxErrorException
+     */
+    @Override
+    public ArrayList<CardKeyInfo> getCardListByOpenId(String openId, String cardId) throws WxErrorException {
+        JsonObject param = new JsonObject();
+        param.addProperty("openid", openId);
+        param.addProperty("card_id", cardId);
+        String responseContent = this.getWxMpService().post(CARD_USER_GETTED, param.toString());
+        JsonObject json = new JsonParser().parse(responseContent).getAsJsonObject();
+        String status = json.get("errcode").getAsString();
+        if ("0".equals(status)) {
+            JsonArray cardList = json.get("card_list").getAsJsonArray();
+            return WxMpGsonBuilder.INSTANCE.create().fromJson(new JsonParser().parse(cardList.getAsString()),
+                    new TypeToken<ArrayList<CardKeyInfo>>() {
+                    }.getType());
+        } else {
+            String errmsg = json.get("errmsg").getAsString();
+            throw new WxErrorException(WxError.builder()
+                    .errorCode(Integer.valueOf(status)).errorMsg(errmsg)
+                    .build());
+        }
+    }
+
+    /**
+     * 批量获取卡券
+     *
+     * @param offset      卡券起始偏移量
+     * @param count       卡券数量
+     * @param status_list 根据卡券的状态来过滤
+     * @return
+     * @throws WxErrorException
+     */
+    @Override
+    public ArrayList<String> getCardList(long offset, long count, String status_list) throws WxErrorException {
+        JsonObject param = new JsonObject();
+        param.addProperty("offset", offset);
+        param.addProperty("count", count);
+        param.addProperty("status_list", StringUtils.isEmpty(status_list) ?
+                "CARD_STATUS_VERIFY_OK" : status_list);
+        String resContent = this.getWxMpService().post(CARDS_GET_MUTIL, param.toString());
+        JsonObject json = new JsonParser().parse(resContent).getAsJsonObject();
+        String status = json.get("errcode").getAsString();
+        if ("0".equals(status)) {
+            JsonArray card_id_list = json.get("card_id_list").getAsJsonArray();
+            return WxMpGsonBuilder.INSTANCE.create().fromJson(card_id_list,
+                    new TypeToken<ArrayList<String>>() {
+                    }.getType());
+        } else {
+            String errmsg = json.get("errmsg").getAsString();
+            throw new WxErrorException(WxError.builder()
+                    .errorCode(Integer.valueOf(status)).errorMsg(errmsg)
+                    .build());
+        }
+    }
+
 }

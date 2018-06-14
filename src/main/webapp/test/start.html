@@ -8,16 +8,14 @@
 
 <script>
     var baseURL = "http://sanren.tunnel.qydev.com";
-    var redirect_uri = baseURL + '/index.html';
+    var redirect_uri = baseURL + "/test/index.html";
     var WxAppID = "wxc6a1c437482053d0";
     var component_appid = "wxee22f2464a0cc0f8";
     OauthCodeUrl();
 
-    // var redirect_uri = 'http://grove.tunnel.qydev.com/index.html';
     function OauthCodeUrl() {
         window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
-            "appid=" + WxAppID + "&redirect_uri=" + redirect_uri + "&response_type=code&scope=snsapi_userinfo&state" +
-            "=success&component_appid=" + component_appid + "#wechat_redirect";
+            "appid=" + WxAppID + "&redirect_uri=" + redirect_uri + "&response_type=code&scope=snsapi_userinfo&state=success&component_appid="+component_appid+"#wechat_redirect";
     }
 </script>
 

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="index.css" rel="stylesheet"/>
+    <title>首页</title>
+</head>
+<body onload="init()">
+<div class="container">
+    <div class="button" id="btn_card">领取优惠券</div>
+    <div class="button" id="btn_carded">已领取的优惠券</div>
+    <div class="button" id="btn_open">打开卡券包</div>
+</div>
+<script src="weixin.js"></script>
+<script>
+    var BASE_URL = "http://sanren.tunnel.qydev.com";
+    var APP_ID = "wxc6a1c437482053d0";
+    //
+    ajax({
+        type: 'POST',
+        url: BASE_URL + '/user/info',
+        data: {
+            appId: APP_ID,
+            code: getUrlParam('code')
+        },
+        success: function (result) {
+            console.log(result);
+            ajax({
+                type: 'POST',
+                url: BASE_URL + '/js_sdk/api_ticket',
+                data: {
+                    appId: APP_ID,
+                    url: location.href
+                },
+                success: function (result) {
+                    wx.config({
+                        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                        appId: APP_ID, // 必填，公众号的唯一标识
+                        timestamp: result.timestamp, // 必填，生成签名的时间戳
+                        nonceStr: result.nonceStr, // 必填，生成签名的随机串
+                        signature: result.signature,// 必填，签名
+                        jsApiList: [
+                            'addCard', 'chooseCard', 'openCard'
+                        ] // 必填，需要使用的JS接口列表
+                    });
+                },
+                error: function () {
+                    console.log('请求jsapiticket出错');
+                }
+
+            });
+        },
+        error: function (error) {
+            console.log('请求用户信息出错');
+        }
+    });
+
+    //获取jsapi成功
+    wx.ready(function () {
+
+    });
+    //获取jsapi失败
+    wx.error(function (res) {
+    });
+
+    function init() {
+        bindClick('btn_carded', function () {
+            console.log("获取签名...");
+            var optionalSignParam = [];
+            optionalSignParam.push(APP_ID);
+            var data = {
+                type: 'POST',
+                url: BASE_URL + "/card/api_signature",
+                data: {
+                    appId: APP_ID,
+                    optionalSignParam: optionalSignParam
+                },
+                success: function (ret) {
+                    wx.chooseCard({
+                        shopId: '', // 门店Id
+                        cardType: '', // 卡券类型
+                        cardId: '', // 卡券Id
+                        timestamp: ret.timestamp, // 卡券签名时间戳
+                        nonceStr: ret.nonceStr, // 卡券签名随机串
+                        signType: 'SHA1', // 签名方式，默认'SHA1'
+                        cardSign: ret.signature, // 卡券签名
+                        success: function (res) {
+                            var cardList = res.cardList; // 用户选中的卡券列表信息
+                            console.log(cardList);
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log("获取card_api signature error...");
+                }
+            };
+            ajax(data);
+        });
+        bindClick('btn_card', function () {
+            console.log('添加卡券到卡包');
+            ajax({
+                type: 'POST',
+                url: BASE_URL + "/card/one",
+                data: {
+                    appId: APP_ID
+                },
+                /*设置返回数据类型*/
+                dataType: 'text',
+                success: function (cardId) {
+                    if (cardId == null) {
+                        console.log("cardId is null");
+                        return;
+                    }
+                    var optionalSignParam = [];
+                    optionalSignParam.push(cardId);
+                    var data = {
+                        type: 'POST',
+                        url: BASE_URL + "/card/api_signature",
+                        data: {
+                            appId: APP_ID,
+                            optionalSignParam: optionalSignParam
+                        },
+                        success: function (ret) {
+                            var cardExt = {
+                                timestamp: ret.timestamp,
+                                nonce_str: ret.nonceStr,
+                                signature: ret.signature
+                            };
+                            wx.addCard({
+                                cardList: [{
+                                    cardId: cardId,
+                                    cardExt: JSON.stringify(cardExt)
+                                }], // 需要添加的卡券列表
+                                success: function (res) {
+                                    var cardList = res.cardList; // 添加的卡券列表信息
+                                }
+                            });
+                        },
+                        error: function (error) {
+                            console.log("获取card_api signature error...");
+                        }
+                    };
+                    ajax(data);
+                },
+                error: function () {
+                    console.log("获取卡券失败");
+                }
+            })
+        });
+        bindClick('btn_open', function () {
+            ajax({
+                url: BASE_URL + "/card/card_list",
+                data: {
+                    appId: APP_ID,
+                    code: getUrlParam('code')
+                },
+                success: function (ret) {
+                    wx.openCard({
+                        cardList: ret// 需要打开的卡券列表
+                    });
+                },
+                error: function () {
+                    console.log("获取用户cardlist出错")
+                }
+            })
+        });
+
+    }
+
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg); // 匹配目标参数
+        if (r != null) {
+            return r[2];
+        }
+        return null; // 返回参数值
+    }
+
+    function bindClick(id, callback) {
+        document.getElementById(id).addEventListener('click', callback);
+    }
+
+    function ajax() {
+        var ajaxData = {
+            type: arguments[0].type || "POST",
+            url: arguments[0].url || "",
+            async: arguments[0].async || "true",
+            data: arguments[0].data || null,
+            dataType: arguments[0].dataType || "json",
+            contentType: arguments[0].contentType || "application/x-www-form-urlencoded; charset=UTF-8",
+            beforeSend: arguments[0].beforeSend || function () {
+            },
+            success: arguments[0].success || function () {
+            },
+            error: arguments[0].error || function () {
+            }
+        }
+        ajaxData.beforeSend()
+        var xhr = createxmlHttpRequest();
+        xhr.responseType = ajaxData.dataType;
+        xhr.open(ajaxData.type, ajaxData.url, ajaxData.async);
+        xhr.setRequestHeader("Content-Type", ajaxData.contentType);
+        xhr.send(convertData(ajaxData.data));
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    ajaxData.success(xhr.response)
+                } else {
+                    ajaxData.error()
+                }
+            }
+        }
+    }
+
+    function createxmlHttpRequest() {
+        if (window.ActiveXObject) {
+            return new ActiveXObject("Microsoft.XMLHTTP");
+        } else if (window.XMLHttpRequest) {
+            return new XMLHttpRequest();
+        }
+    }
+
+    function convertData(data) {
+        if (typeof data === 'object') {
+            var convertResult = "";
+            for (var c in data) {
+                convertResult += c + "=" + data[c] + "&";
+            }
+            convertResult = convertResult.substring(0, convertResult.length - 1)
+            return convertResult;
+        } else {
+            return data;
+        }
+    }
+</script>
+</body>
+</html>

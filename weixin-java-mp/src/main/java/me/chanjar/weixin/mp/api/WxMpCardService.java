@@ -1,7 +1,10 @@
 package me.chanjar.weixin.mp.api;
 
+import java.util.ArrayList;
+
 import me.chanjar.weixin.common.bean.WxCardApiSignature;
 import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.mp.bean.card.CardKeyInfo;
 import me.chanjar.weixin.mp.bean.result.WxMpCardResult;
 
 /**
@@ -16,6 +19,11 @@ public interface WxMpCardService {
   String CARD_CODE_GET = "https://api.weixin.qq.com/card/code/get";
   String CARD_CODE_CONSUME = "https://api.weixin.qq.com/card/code/consume";
   String CARD_CODE_MARK = "https://api.weixin.qq.com/card/code/mark";
+
+  //获取用户已领取卡券
+  String CARD_USER_GETTED = "https://api.weixin.qq.com/card/user/getcardlist";
+  //批量获取门店卡券
+  String CARDS_GET_MUTIL = "https://api.weixin.qq.com/card/batchget";
 
   /**
    * 得到WxMpService
@@ -122,4 +130,26 @@ public interface WxMpCardService {
    * <br> 可由 com.google.gson.JsonParser#parse 等方法直接取JSON串中的某个字段。
    */
   String getCardDetail(String cardId) throws WxErrorException;
+
+
+    /**
+     * 查询用户在某商家下的卡券code及cardId信息
+     *
+     * @param openId 用户openId
+     * @param cardId 卡券ID，可为空，为空则表示获取所有卡券
+     * @return
+     * @throws WxErrorException
+     */
+    public ArrayList<CardKeyInfo> getCardListByOpenId(String openId, String cardId) throws WxErrorException;
+
+    /**
+     * 批量获取卡券
+     *
+     * @param offset      卡券起始偏移量
+     * @param count       卡券数量
+     * @param status_list 根据卡券的状态来过滤
+     * @return
+     * @throws WxErrorException
+     */
+  ArrayList<String> getCardList(long offset, long count, String status_list) throws WxErrorException;
 }

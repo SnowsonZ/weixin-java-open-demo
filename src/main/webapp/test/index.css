@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.button {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin: 10px;
+    width: 160px;
+    height: 70px;
+    border-radius: 15%;
+    background: #f00;
+    color: #fff;
+    font-size: 20px;
+}
