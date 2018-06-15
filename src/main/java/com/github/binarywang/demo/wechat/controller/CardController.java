@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import me.chanjar.weixin.common.bean.WxCardApiSignature;
 import me.chanjar.weixin.common.exception.WxErrorException;
@@ -110,7 +109,17 @@ public class CardController extends BaseController {
         try {
             ArrayList<String> cardList = getMpService(appId).getCardService()
                     .getCardList(0, 50, "");
-            return cardList.get((int) (Math.random() * cardList.size()));
+            while (cardList.size() > 0) {
+                int index = (int) (Math.random() * cardList.size());
+                String cardId = cardList.get(index);
+                //判断库存量
+                if (getMpService(appId).getCardService().hasRestCard(cardId)) {
+                    return cardId;
+                } else {
+                    cardList.remove(index);
+                }
+            }
+            return null;
         } catch (WxErrorException e) {
             e.printStackTrace();
             logger.error("获取优惠券失败...");
@@ -121,13 +130,6 @@ public class CardController extends BaseController {
     @PostMapping("card_list")
     public ArrayList<CardKeyInfo> getAllCardByUser(@RequestParam String appId,
                                                    @RequestParam String code) {
-        try {
-            return getMpService(appId).getCardService().getCardListByOpenId(getMpService(appId)
-                    .oauth2getAccessToken(code)
-                    .getOpenId(), "");
-        } catch (WxErrorException e) {
-            e.printStackTrace();
-        }
         return null;
     }
 

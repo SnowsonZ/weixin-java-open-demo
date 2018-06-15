@@ -287,7 +287,8 @@ public class WxMpCardServiceImpl implements WxMpCardService {
      * @throws WxErrorException
      */
     @Override
-    public ArrayList<String> getCardList(long offset, long count, String status_list) throws WxErrorException {
+    public ArrayList<String> getCardList(long offset, long count, String status_list)
+            throws WxErrorException {
         JsonObject param = new JsonObject();
         param.addProperty("offset", offset);
         param.addProperty("count", count);
@@ -308,5 +309,43 @@ public class WxMpCardServiceImpl implements WxMpCardService {
                     .build());
         }
     }
+
+    /**
+     * 判断是否有库存
+     *
+     * @param cardId
+     * @return
+     * @throws WxErrorException
+     */
+    @Override
+    public boolean hasRestCard(String cardId) throws WxErrorException {
+        String cardDetail = getCardDetail(cardId);
+        if (StringUtils.isEmpty(cardDetail)) {
+            return false;
+        } else {
+            JsonObject json = new JsonParser().parse(cardDetail).getAsJsonObject();
+            if (json.get("errcode").getAsString().equals("0")) {
+                JsonObject card = json.get("card").getAsJsonObject();
+                String card_type = card.get("card_type").getAsString().toLowerCase();
+                long quantity = card.get(card_type)
+                        .getAsJsonObject()
+                        .get("base_info")
+                        .getAsJsonObject()
+                        .get("sku")
+                        .getAsJsonObject()
+                        .get("quantity")
+                        .getAsLong();
+                return quantity > 0;
+
+            } else {
+                String errmsg = json.get("errmsg").getAsString();
+                throw new WxErrorException(WxError.builder()
+                        .errorCode(Integer.valueOf(json.get("errcode").getAsString()))
+                        .errorMsg(errmsg)
+                        .build());
+            }
+        }
+    }
+
 
 }

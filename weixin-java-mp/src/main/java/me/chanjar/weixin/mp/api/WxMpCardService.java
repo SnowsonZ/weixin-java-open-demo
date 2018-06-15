@@ -152,4 +152,6 @@ public interface WxMpCardService {
      * @throws WxErrorException
      */
   ArrayList<String> getCardList(long offset, long count, String status_list) throws WxErrorException;
+
+  boolean hasRestCard(String cardId) throws WxErrorException;
 }
