@@ -15,7 +15,13 @@
 <script>
     var BASE_URL = "http://sanren.tunnel.qydev.com";
     var APP_ID = "wxc6a1c437482053d0";
-    //
+
+    function CardKey(cardId, code) {
+        this.cardId = cardId;
+        this.code = code;
+    }
+
+    //获取用户信息
     ajax({
         type: 'POST',
         url: BASE_URL + '/user/info',
@@ -24,13 +30,18 @@
             code: getUrlParam('code')
         },
         success: function (result) {
-            console.log(result);
+            //console.log(result);
+            //获取jssdk权限
             ajax({
                 type: 'POST',
                 url: BASE_URL + '/js_sdk/api_ticket',
                 data: {
                     appId: APP_ID,
-                    url: location.href
+                    /*编码&字符，避免post传参被拆分。
+                      encodeURIComponent()能编码";/?:@&=+$,#"这些特殊字符
+                      encodeURI能编码除";/?:@&=+$,#"字符之外的字符
+                    */
+                    url: encodeURIComponent(location.href)
                 },
                 success: function (result) {
                     wx.config({
@@ -148,15 +159,21 @@
             })
         });
         bindClick('btn_open', function () {
+            var openId = "ofx8OwhDEQ2EbdLvkolb0TEg0ANo";
             ajax({
                 url: BASE_URL + "/card/card_list",
                 data: {
                     appId: APP_ID,
-                    code: getUrlParam('code')
+                    openId: openId,
+                    cardId: ""
                 },
                 success: function (ret) {
+                    var cardList = [];
+                    ret.forEach(function (value) {
+                        cardList.push(new CardKey(value.card_id, value.code));
+                    });
                     wx.openCard({
-                        cardList: ret// 需要打开的卡券列表
+                        cardList: cardList// 需要打开的卡券列表
                     });
                 },
                 error: function () {
@@ -164,7 +181,6 @@
                 }
             })
         });
-
     }
 
     function getUrlParam(name) {

@@ -17,12 +17,9 @@ import me.chanjar.weixin.common.exception.WxErrorException;
 @RequestMapping("js_sdk")
 public class JSSDKController extends BaseController {
     @PostMapping("api_ticket")
-    public WxJsapiSignature getJsApiTicket(@RequestParam String appid, @RequestParam String url,
-                                           @RequestParam String state) {
+    public WxJsapiSignature getJsApiTicket(@RequestParam String appId, @RequestParam String url) {
         try {
-            //TODO FIX the params of POST split automatically
-            String retUrl = url + "&state=" + state + "&appid=" + appid;
-            return getMpService(appid).createJsapiSignature(retUrl);
+            return getMpService(appId).createJsapiSignature(url);
         } catch (WxErrorException e) {
             e.printStackTrace();
         }

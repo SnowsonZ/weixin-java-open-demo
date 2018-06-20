@@ -127,9 +127,24 @@ public class CardController extends BaseController {
         return null;
     }
 
+    /**
+     * 用户名下卡券
+     *
+     * @param appId
+     * @param openId
+     * @param cardId 可以为空
+     * @return
+     */
     @PostMapping("card_list")
     public ArrayList<CardKeyInfo> getAllCardByUser(@RequestParam String appId,
-                                                   @RequestParam String code) {
+                                                   @RequestParam String openId,
+                                                   @Nullable @RequestParam String cardId) {
+        try {
+            return getMpService(appId).getCardService().getCardListByOpenId(openId, cardId);
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+            logger.error("get card list by openId error");
+        }
         return null;
     }
 

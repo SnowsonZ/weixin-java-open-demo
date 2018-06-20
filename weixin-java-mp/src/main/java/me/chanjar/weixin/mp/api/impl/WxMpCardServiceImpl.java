@@ -266,7 +266,7 @@ public class WxMpCardServiceImpl implements WxMpCardService {
         String status = json.get("errcode").getAsString();
         if ("0".equals(status)) {
             JsonArray cardList = json.get("card_list").getAsJsonArray();
-            return WxMpGsonBuilder.INSTANCE.create().fromJson(new JsonParser().parse(cardList.getAsString()),
+            return WxMpGsonBuilder.INSTANCE.create().fromJson(cardList,
                     new TypeToken<ArrayList<CardKeyInfo>>() {
                     }.getType());
         } else {
