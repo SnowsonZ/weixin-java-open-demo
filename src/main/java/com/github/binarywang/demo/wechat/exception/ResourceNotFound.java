@@ -1,4 +1,4 @@
-package com.example.springboot.exception;
+package com.github.binarywang.demo.wechat.exception;
 
 /**
  * Exception used when some resource was not found.

@@ -228,7 +228,7 @@ public class WxMpCardServiceImpl implements WxMpCardService {
     }
 
     @Override
-    public String getCardDetail(String cardId) throws WxErrorException {
+    public synchronized String getCardDetail(String cardId) throws WxErrorException {
         JsonObject param = new JsonObject();
         param.addProperty("card_id", cardId);
         String responseContent = this.wxMpService.post(CARD_GET, param.toString());
@@ -287,7 +287,7 @@ public class WxMpCardServiceImpl implements WxMpCardService {
      * @throws WxErrorException
      */
     @Override
-    public ArrayList<String> getCardList(long offset, long count, String status_list)
+    public synchronized ArrayList<String> getCardList(long offset, long count, String status_list)
             throws WxErrorException {
         JsonObject param = new JsonObject();
         param.addProperty("offset", offset);
@@ -318,10 +318,10 @@ public class WxMpCardServiceImpl implements WxMpCardService {
      * @throws WxErrorException
      */
     @Override
-    public boolean hasRestCard(String cardId) throws WxErrorException {
+    public synchronized String hasRestCardAndGetName(String cardId) throws WxErrorException {
         String cardDetail = getCardDetail(cardId);
         if (StringUtils.isEmpty(cardDetail)) {
-            return false;
+            return null;
         } else {
             JsonObject json = new JsonParser().parse(cardDetail).getAsJsonObject();
             if (json.get("errcode").getAsString().equals("0")) {
@@ -335,8 +335,16 @@ public class WxMpCardServiceImpl implements WxMpCardService {
                         .getAsJsonObject()
                         .get("quantity")
                         .getAsLong();
-                return quantity > 0;
-
+                if (quantity > 0) {
+                    return card.get(card_type)
+                            .getAsJsonObject()
+                            .get("base_info")
+                            .getAsJsonObject()
+                            .get("title")
+                            .getAsString();
+                } else {
+                    return null;
+                }
             } else {
                 String errmsg = json.get("errmsg").getAsString();
                 throw new WxErrorException(WxError.builder()
@@ -346,6 +354,4 @@ public class WxMpCardServiceImpl implements WxMpCardService {
             }
         }
     }
-
-
 }

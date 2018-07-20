@@ -5,12 +5,14 @@ logging:
 
 wechat:
   open:
-    componentAppId: "***********"
-    componentSecret: "*************"
-    componentToken: "*****"
-    componentAesKey: "*********"
+    componentAppId: "wxb767b6698f350cba"
+    componentSecret: "9c9d1899541e86e39e79faae182b1ddf"
+    componentToken: "sanren"
+    componentAesKey: "jZIiNZdK0kVOi3KbrfLbm4Y3U7IoVog1YaybGxakBTJ"
   redis:
     host: "127.0.0.1"
+    port: 36677
+    password: "couponkfc"
 server:
   port: 80
 

@@ -13,7 +13,7 @@
 </div>
 <script src="weixin.js"></script>
 <script>
-    var BASE_URL = "http://sanren.tunnel.qydev.com";
+    var BASE_URL = "https://sanrenbc.com/wx_open";
     var APP_ID = "wxc6a1c437482053d0";
 
     function CardKey(cardId, code) {
@@ -30,7 +30,7 @@
             code: getUrlParam('code')
         },
         success: function (result) {
-            //console.log(result);
+            console.log(result);
             //获取jssdk权限
             ajax({
                 type: 'POST',
@@ -107,6 +107,13 @@
             };
             ajax(data);
         });
+        /**
+         * 添加到卡包，card_ticket: 参与卡券签名关键字。
+         *          cardExt: 添加卡券到卡包的关键字
+         * 1. 获取卡券Id
+         * 2. 获取卡券签名
+         * 3. 添加卡券到卡包
+         */
         bindClick('btn_card', function () {
             console.log('添加卡券到卡包');
             ajax({
@@ -158,8 +165,12 @@
                 }
             })
         });
+        /**
+         * 打开卡券包
+         */
         bindClick('btn_open', function () {
             var openId = "ofx8OwhDEQ2EbdLvkolb0TEg0ANo";
+            // var openId = "ofx8OwnJQXZtGzHq6LUCiYjw043o";
             ajax({
                 url: BASE_URL + "/card/card_list",
                 data: {

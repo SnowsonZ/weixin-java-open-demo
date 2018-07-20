@@ -4,6 +4,7 @@ import com.sun.istack.internal.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 
 import me.chanjar.weixin.common.bean.WxCardApiSignature;
 import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.mp.bean.card.CardDetailInfo;
 import me.chanjar.weixin.mp.bean.card.CardKeyInfo;
 import me.chanjar.weixin.mp.bean.result.WxMpCardResult;
 
@@ -105,7 +107,7 @@ public class CardController extends BaseController {
      * @return
      */
     @PostMapping("one")
-    public String getCardRandom(@RequestParam String appId) {
+    public CardDetailInfo getCardRandom(@RequestParam String appId) {
         try {
             ArrayList<String> cardList = getMpService(appId).getCardService()
                     .getCardList(0, 50, "");
@@ -113,8 +115,9 @@ public class CardController extends BaseController {
                 int index = (int) (Math.random() * cardList.size());
                 String cardId = cardList.get(index);
                 //判断库存量
-                if (getMpService(appId).getCardService().hasRestCard(cardId)) {
-                    return cardId;
+                String cardName = getMpService(appId).getCardService().hasRestCardAndGetName(cardId);
+                if (!StringUtils.isEmpty(cardName)) {
+                    return new CardDetailInfo(cardId, cardName);
                 } else {
                     cardList.remove(index);
                 }

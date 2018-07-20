@@ -160,5 +160,5 @@ public interface WxMpCardService {
      * @return
      * @throws WxErrorException
      */
-    boolean hasRestCard(String cardId) throws WxErrorException;
+    String hasRestCardAndGetName(String cardId) throws WxErrorException;
 }

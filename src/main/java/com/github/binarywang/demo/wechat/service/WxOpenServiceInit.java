@@ -55,7 +55,7 @@ public class WxOpenServiceInit extends WxOpenServiceImpl {
                     throws WxErrorException {
                 logger.info("\n接收到 {} 公众号请求消息，内容：{}", wxMpService.getWxMpConfigStorage().getAppId(), wxMpXmlMessage);
                 return WxMpXmlOutMessage.TEXT()
-                        .content("感谢关注")
+                        .content("")
                         .toUser(wxMpXmlMessage.getFromUser())
                         .fromUser(wxMpXmlMessage.getToUser())
                         .build();

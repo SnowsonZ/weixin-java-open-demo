@@ -1,4 +1,4 @@
-package com.example.springboot.exception;
+package com.github.binarywang.demo.wechat.exception;
 
 import com.github.binarywang.demo.wechat.bean.ErrorInfo;
 

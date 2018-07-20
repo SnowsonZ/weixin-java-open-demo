@@ -49,7 +49,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         return new ErrorInfo("server internal error...");
     }
 
-    @ExceptionHandler(value = com.example.springboot.exception.ResourceNotFound.class)
+    @ExceptionHandler(value = ResourceNotFound.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorInfo resourceNotFoundExceptionHandle(HttpServletRequest request,Exception e){

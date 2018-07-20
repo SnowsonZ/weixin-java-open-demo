@@ -8,10 +8,10 @@
     align-items: center;
     display: flex;
     margin: 10px;
-    width: 160px;
-    height: 70px;
-    border-radius: 15%;
+    width: 220px;
+    height: 100px;
+    border-radius: 20px;
     background: #f00;
     color: #fff;
-    font-size: 20px;
+    font-size: 26px;
 }
