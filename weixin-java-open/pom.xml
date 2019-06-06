@@ -21,22 +21,6 @@
     </developer>
   </developers>
   <dependencies>
-    <!--<dependency>-->
-      <!--<groupId>com.github.binarywang</groupId>-->
-      <!--<artifactId>weixin-java-common</artifactId>-->
-      <!--<version>${project.version}</version>-->
-    <!--</dependency>-->
-    <!--<dependency>-->
-      <!--<groupId>com.github.binarywang</groupId>-->
-      <!--<artifactId>weixin-java-mp</artifactId>-->
-      <!--<version>${project.version}</version>-->
-    <!--</dependency>-->
-    <!--<dependency>-->
-      <!--<groupId>com.github.binarywang</groupId>-->
-      <!--<artifactId>weixin-java-miniapp</artifactId>-->
-      <!--<version>${project.version}</version>-->
-    <!--</dependency>-->
-
     <dependency>
       <groupId>org.jodd</groupId>
       <artifactId>jodd-http</artifactId>
@@ -94,6 +78,11 @@
     <dependency>
       <groupId>com.github.binarywang</groupId>
       <artifactId>weixin-java-mp</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.binarywang</groupId>
+      <artifactId>weixin-java-common</artifactId>
       <version>3.0.0</version>
     </dependency>
   </dependencies>
