@@ -90,21 +90,11 @@
             <artifactId>weixin-java-open</artifactId>
             <version>3.0.0</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.github.binarywang</groupId>-->
-            <!--<artifactId>weixin-java-common</artifactId>-->
-            <!--<version>3.0.0</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.github.binarywang</groupId>-->
-            <!--<artifactId>weixin-java-mp</artifactId>-->
-            <!--<version>3.0.0</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.github.binarywang</groupId>-->
-            <!--<artifactId>weixin-java-open</artifactId>-->
-            <!--<version>3.0.0</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-common</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>
