@@ -16,4 +16,7 @@ wechat:
 server:
   port: 80
 
+log:
+  path: /mnt/data/logback/wx_open
+
 
